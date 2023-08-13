@@ -7,9 +7,9 @@ export default function Login() {
     <div>
       <div className="grid h-screen place-items-center bg-gray-200">
         <p className="font-bold text-2xl mt-16 text-orange-500">Bombo Blog</p>
-        <div className="mb-24 max-w-full bg-orange-500 overflow-hidden border rounded-lg text-white">
+        <div className="mb-24 max-w-full bg-orange-500 overflow-hidden border rounded-lg ">
           <form className="relative flex flex-col text-center pt-9 pl-4 pr-7 gap-4 ">
-            <span className="font-bold text-2xl">Login</span>
+            <span className="font-bold text-2xl text-white">Login</span>
             <div className="overflow-hidden rounded-lg bg-white w-full mt-4 mb-4 mr-2 ml-2">
               <input
                 type="email"
