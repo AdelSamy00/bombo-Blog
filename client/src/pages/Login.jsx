@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Login() {
   return (
     <div>
-      <div className="grid h-screen place-items-center">
+      <div className="grid h-screen place-items-center bg-gray-200">
         <p className="font-bold text-2xl mt-16 text-orange-500">Bombo Blog</p>
         <div className="mb-24 max-w-full bg-orange-500 overflow-hidden border rounded-lg text-white">
           <form className="relative flex flex-col text-center pt-9 pl-4 pr-7 gap-4 ">

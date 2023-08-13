@@ -21,7 +21,7 @@ export default function Signup() {
   };
   return (
     <div>
-      <div className="grid h-screen w-full place-items-center">
+      <div className="grid h-screen w-full place-items-center bg-gray-200">
         <div className="max-w-full bg-orange-500 overflow-hidden border rounded-lg text-white">
           <form className="relative flex flex-col text-center pt-5 pl-4 pr-7 gap-4 ">
             <span className="font-bold text-2xl ">Sign up</span>
