@@ -28,7 +28,7 @@ export default function Header() {
                 </a>
                 <a href="#">Profile</a>
                 <a href="#">Friends</a>
-                <a href="#">Your postes</a>
+                <a href="#">Your posts</a>
               </div>
             </div>
             {/* secondary */}
@@ -65,7 +65,7 @@ export default function Header() {
                 Friends
               </a>
               <a href="#" className="flex justify-center">
-                Your postes
+                Your posts
               </a>
               <button className="p-2 bg-white text-orange-500">Logout</button>
             </div>
