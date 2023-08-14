@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
-import './Header.css';
+import './Fonts.css';
 export default function Header() {
   const [toggleMenu, setToggleMenu] = useState(false);
   return (
@@ -17,11 +17,7 @@ export default function Header() {
                   href="/"
                   className="flex gap-1 font-bold text-white text-2xl items-center "
                 >
-                  <img
-                    src="../../public/blogging.png"
-                    className="w-10 h-10 mr-2"
-                    alt=""
-                  />
+                  <img src="/blogging.png" className="w-10 h-10 mr-2" alt="" />
                   <span>Bombo Blog</span>
                 </a>
               </div>
