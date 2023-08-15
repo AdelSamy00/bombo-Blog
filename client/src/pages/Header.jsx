@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import './Fonts.css';
+import { Link } from 'react-router-dom';
 export default function Header() {
   const [toggleMenu, setToggleMenu] = useState(false);
   return (
@@ -23,10 +24,8 @@ export default function Header() {
               </div>
               {/* primary */}
               <div className="hidden md:flex gap-8 text-white text-xl font">
-                <a href="#" className="">
-                  Home
-                </a>
-                <a href="#">Profile</a>
+                <Link to={'/home'}> Home </Link>
+                <Link to={'/profile'}> Profile </Link>
                 <a href="#">Friends</a>
                 <a href="#">Your posts</a>
               </div>
