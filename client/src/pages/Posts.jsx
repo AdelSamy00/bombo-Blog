@@ -23,7 +23,7 @@ export default function Posts() {
               </h3>
               <div className="flex flex-col sm:px-20 gap-7 pb-5">
                 {/* post 1 */}
-                <div className="">
+                <div className="relative">
                   {/* post header */}
                   <div className="flex flex-row items-center gap-3 p-5  rounded-t-xl bg-gray-400">
                     <img
@@ -31,14 +31,14 @@ export default function Posts() {
                       className="w-10 h-10 mr-2"
                       alt=""
                     />
-                    <div className="font2 flex flex-col items-start">
+                    <div className="font2 flex flex-col items-start w-full">
                       <p>Adel Samy</p>
                       <p className="text-xs text-gray-800">5/12/2024</p>
                     </div>
-                    <div className="flex flex-row w-full justify-end ">
+                    <div className="flex flex-row w-full justify-end">
                       <div
-                        className={` w-1/2 md:w-1/6 font bg-gray-100 overflow-hidden  flex flex-col rounded-lg  duration-700 ${
-                          !toggleMenu ? 'w-0 h-0' : 'h-1/2 pt-3'
+                        className={`absolute right-[12%] md:right-[5%]  font bg-gray-100 overflow-hidden  flex flex-col rounded-lg transition-all duration-700 ${
+                          !toggleMenu ? 'w-0 h-0' : 'w-1/6 h-fit pt-3'
                         }`}
                       >
                         <div className="px-4">
@@ -90,7 +90,7 @@ export default function Posts() {
                     <div className="flex items-center justify-center">
                       <img
                         src="/blogging.png"
-                        className=" w-[400px] h-[300px]  mr-2"
+                        className="  md:w-[400px] md:h-[400px]  mr-2"
                         alt=""
                       />
                     </div>
