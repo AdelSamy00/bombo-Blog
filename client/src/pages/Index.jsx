@@ -10,7 +10,7 @@ function Index() {
         <Header />
       </header>
       <section>
-        <div className="flex">
+        <div className="flex justify-end">
           <FriendsNavbar />
           {/* secendery div --> posts */}
           <div className="flex flex-col bg-white rounded-md w-full md:w-5/6 min-h-screen relative px-10 pt-10">
@@ -59,7 +59,7 @@ function Index() {
                   <div className="flex items-center justify-center">
                     <img
                       src="/blogging.png"
-                      className=" w-[400px] h-[300px]  mr-2"
+                      className=" md:w-[400px] md:h-[400px]  mr-2"
                       alt=""
                     />
                   </div>
@@ -85,7 +85,7 @@ function Index() {
                   <div className="flex items-center justify-center">
                     <img
                       src="/blogging.png"
-                      className=" w-[400px] h-[300px]  mr-2"
+                      className=" md:w-[400px] md:h-[400px]  mr-2"
                       alt=""
                     />
                   </div>

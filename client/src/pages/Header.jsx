@@ -26,8 +26,8 @@ export default function Header() {
               <div className="hidden md:flex gap-8 text-white text-xl font">
                 <Link to={'/home'}> Home </Link>
                 <Link to={'/profile'}> Profile </Link>
-                <a href="#">Friends</a>
-                <a href="#">Your posts</a>
+                <Link to={'/friends'}> Friends </Link>
+                <Link to={'/posts'}> Your posts </Link>
               </div>
             </div>
             {/* secondary */}
@@ -49,23 +49,23 @@ export default function Header() {
         {/* mobile navigation */}
         <div
           className={`fixed z-40 w-full font bg-gray-100 overflow-hidden flex flex-col md:hidden gap-12  origin-top duration-700 ${
-            !toggleMenu ? 'h-0' : 'h-full pt-3'
+            !toggleMenu ? 'h-0' : 'h-1/2 pt-3'
           }`}
         >
           <div className="px-8">
             <div className="flex flex-col gap-8 font-bold tracking-wider font">
-              <a href="#" className="flex justify-center">
+              <Link to={'/home'} className="flex justify-center">
                 Home
-              </a>
-              <a href="#" className="flex justify-center">
+              </Link>
+              <Link to={'/profile'} className="flex justify-center">
                 Profile
-              </a>
-              <a href="#" className="flex justify-center">
+              </Link>
+              <Link to={'/friends'} className="flex justify-center">
                 Friends
-              </a>
-              <a href="#" className="flex justify-center">
-                Your posts
-              </a>
+              </Link>
+              <Link to={'/posts'} className="flex justify-center">
+                Your Posts
+              </Link>
               <button className="p-2 bg-white text-orange-500">Logout</button>
             </div>
           </div>

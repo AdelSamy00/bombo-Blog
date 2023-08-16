@@ -4,7 +4,8 @@ import FriendsNavbar from './FriendsNavbar';
 import './Fonts.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-export default function Profile() {
+
+export default function Posts() {
   const [toggleMenu, setToggleMenu] = useState(false);
   return (
     <div>
@@ -15,55 +16,6 @@ export default function Profile() {
         <div className="flex justify-end">
           <FriendsNavbar />
           <div className="flex flex-col  bg-white rounded-md w-full md:w-5/6 min-h-screen relative px-10 pt-10">
-            {/* profile Settings */}
-            <div className="flex flex-col lg:flex-row w-full justify-start items-start gap-5">
-              <img
-                src="/blogging.png"
-                className="w-[300px] h-[300px] sm:ml-32"
-                alt=""
-              />
-              <div className="flex flex-col justify-center items-center lg:items-start  w-full ">
-                <div className="flex flex-col lg:flex-row items-center justify-between mt-10 ">
-                  <div className="flex flex-row items-center  mt-5 lg:mr-5">
-                    <h3 className="mr-5 ">Frist Name:</h3>
-                    <input
-                      type="text"
-                      className="w-32 text-center rounded-xl text-black p-2"
-                      disabled
-                      value="Adel"
-                    />
-                  </div>
-                  <div className="flex flex-row items-center mt-5">
-                    <h3 className="mr-5">Last Name:</h3>
-                    <input
-                      type="text"
-                      className="w-32 text-center rounded-xl text-black p-2"
-                      disabled
-                      value="Samy"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-row items-center mt-5">
-                  <h3 className="mr-5">BirthDate:</h3>
-                  <input
-                    type="text"
-                    className="w-32 text-center rounded-xl text-black p-2"
-                    disabled
-                    value="15/5/2000"
-                  />
-                </div>
-                <div className="flex flex-row items-center justify-center mt-5">
-                  <h3 className="mr-5">Gender:</h3>
-                  <input
-                    type="text"
-                    className="w-32 text-center rounded-xl text-black p-2"
-                    disabled
-                    value="Male"
-                  />
-                </div>
-              </div>
-            </div>
-            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
             {/* Your posts */}
             <div className="">
               <h3 className="flex flex-col justify-center items-center font text-5xl text-orange-500 pb-10">
@@ -138,7 +90,7 @@ export default function Profile() {
                     <div className="flex items-center justify-center">
                       <img
                         src="/blogging.png"
-                        className="  md:w-[400px] md:h-[400px]  mr-2"
+                        className=" w-[400px] h-[300px]  mr-2"
                         alt=""
                       />
                     </div>
