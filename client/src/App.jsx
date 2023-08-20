@@ -5,6 +5,7 @@ import Index from './pages/Index';
 import Profile from './pages/Profile';
 import Posts from './pages/Posts';
 import Friends from './pages/Friends';
+import AddPost from './pages/AddPost';
 function App() {
   return (
     <>
@@ -15,6 +16,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/posts" element={<Posts />} />
         <Route path="/friends" element={<Friends />} />
+        <Route path="/addpost" element={<AddPost />} />
       </Routes>
     </>
   );
