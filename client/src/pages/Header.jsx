@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import './Fonts.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 export default function Header() {
+  const navigate = useNavigate();
   const [toggleMenu, setToggleMenu] = useState(false);
+  useEffect(() => {
+    axios
+      .get('/profile')
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        navigate('/');
+      });
+  }, []);
   return (
     <div>
       <nav>
@@ -40,7 +52,13 @@ export default function Header() {
               </div>
             </div>
             <div className="md:flex items-center hidden">
-              <button className="font p-2 px-3 bg-white text-orange-500 rounded-lg">
+              <button
+                onClick={() => {
+                  axios.post('/logout');
+                  navigate('/');
+                }}
+                className="font p-2 px-3 bg-white text-orange-500 rounded-lg"
+              >
                 Logout
               </button>
             </div>

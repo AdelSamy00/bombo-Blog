@@ -1,7 +1,13 @@
+import axios from 'axios';
 import { useState, React } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 export default function Signup() {
+  const navigate = useNavigate();
   const [visible, setVisible] = useState(0);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [gender, setGender] = useState('male');
   const getTime = () => {
     const timestamp = new Date().getTime();
     const date = new Date(timestamp);
@@ -19,6 +25,22 @@ export default function Signup() {
       setVisible(0);
     }
   };
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    await axios
+      .post('/register', { username, email, password, birthDate, gender })
+      .then((res) => {
+        console.log(res);
+        if (res.status == 201) {
+          alert('user created.');
+          navigate('/home');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        alert('there found anthor user using this email');
+      });
+  };
   return (
     <div>
       <div className="grid h-screen w-full place-items-center bg-gray-200">
@@ -32,25 +54,31 @@ export default function Signup() {
             <div className=" p-4 border-solid border border-neutral-300 rounded-md text-left ">
               <label htmlFor="fullname">Full Name: </label>
               <input
+                value={username}
                 id="fullname"
                 type="text"
                 className="rounded-lg outline-none h-10 w-full text-black text-sm bg-none border-0 border-b pt-2 pb-2 pl-4 pr-4"
                 placeholder="Full Name"
+                onChange={(e) => setUsername(e.target.value)}
               />
               <label htmlFor="email">Email: </label>
               <input
                 type="email"
                 id="email"
+                value={email}
                 className="rounded-lg outline-none h-10 w-full text-black text-sm bg-none border-0 border-b pt-2 pb-2 pl-4 pr-4"
                 placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
               />
               <label htmlFor="password">Password: </label>
               <div className="flex flex-row bg-white rounded-lg ">
                 <input
+                  value={password}
                   type="password"
                   id="password"
                   className="rounded-lg outline-none h-10 w-full text-black text-sm bg-none border-0 border-b pt-2 pb-2 pl-4 pr-4"
                   placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   onClick={showPassword}
@@ -111,6 +139,8 @@ export default function Signup() {
                   <select
                     name="gender"
                     id="gender"
+                    defaultValue={gender}
+                    onChange={(e) => setGender(e.target.value)}
                     className="block w-full sm:w-56 rounded-md p-2 mb-2 mt-2 border focus:ring-2 focus:outline-none text-black"
                   >
                     <option value="male" className="text-center">
@@ -123,7 +153,10 @@ export default function Signup() {
                 </div>
               </div>
             </div>
-            <button className="flex items-center justify-center sm:w-1/4 sm:ml-56 bg-blue-600 text-white text-base font-semibold cursor-pointer border-0 rounded-3xl sm:rounded-xl pt-3 pb-3 pl-4 pr-4 transition hover:bg-blue-800 mb-5">
+            <button
+              onClick={(e) => submitHandler(e)}
+              className="flex items-center justify-center sm:w-1/4 sm:ml-56 bg-blue-600 text-white text-base font-semibold cursor-pointer border-0 rounded-3xl sm:rounded-xl pt-3 pb-3 pl-4 pr-4 transition hover:bg-blue-800 mb-5"
+            >
               Sign up
             </button>
           </form>

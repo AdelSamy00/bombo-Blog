@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import axios from 'axios';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Index from './pages/Index';
@@ -7,6 +8,8 @@ import Posts from './pages/Posts';
 import Friends from './pages/Friends';
 import AddPost from './pages/AddPost';
 function App() {
+  axios.defaults.baseURL = 'http://localhost:3000';
+  axios.defaults.withCredentials = true;
   return (
     <>
       <Routes>

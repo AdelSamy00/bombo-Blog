@@ -4,7 +4,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import FriendsNavbar from './FriendsNavbar';
 import { Link } from 'react-router-dom';
+import { useState, useEffect, React } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 function Index() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    axios
+      .get('/profile')
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        navigate('/');
+      });
+  }, []);
   return (
     <div>
       <header className="sticky top-0 z-30 w-full">
