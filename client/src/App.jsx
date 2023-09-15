@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import Posts from './pages/Posts';
 import Friends from './pages/Friends';
 import AddPost from './pages/AddPost';
+import EditProfile from './pages/EditProfile';
 function App() {
   axios.defaults.baseURL = 'http://localhost:3000';
   axios.defaults.withCredentials = true;
@@ -20,6 +21,7 @@ function App() {
         <Route path="/posts" element={<Posts />} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/addpost" element={<AddPost />} />
+        <Route path="/editprofile" element={<EditProfile />} />
       </Routes>
     </>
   );

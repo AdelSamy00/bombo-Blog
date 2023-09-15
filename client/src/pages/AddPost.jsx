@@ -10,6 +10,7 @@ export default function AddPost() {
   const [fileDataURL, setFileDataURL] = useState(null);
   const changeHandler = (e) => {
     const image = e.target.files[0];
+    console.log(image);
     if (!image.type.match(imageMimeType)) {
       alert('Image mime type is not valid');
       return;
@@ -19,11 +20,13 @@ export default function AddPost() {
   useEffect(() => {
     let fileReader,
       isCancel = false;
+    console.log(image);
     if (image) {
       fileReader = new FileReader();
       fileReader.onload = (e) => {
         const { result } = e.target;
         if (result && !isCancel) {
+          console.log(result);
           setFileDataURL(result);
         }
       };

@@ -6,9 +6,47 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import sessions from 'express-session';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { default as connectMongoDBSession } from 'connect-mongodb-session';
+import bodyParser from 'body-parser';
 import { User } from './models/User.js';
 
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+export const uploadPath = path.join(
+  dirname,
+  '..',
+  '..',
+  'Blog',
+  'client',
+  'public',
+  'uploads',
+  '/'
+);
+//img storage confing
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, uploadPath);
+  },
+  filename: (req, file, callback) => {
+    callback(null, `image-${Date.now()}-${file.originalname}`);
+  },
+});
+//img filter
+const isImage = (req, file, callback) => {
+  if (file.mimetype.startsWith('image')) {
+    callback(null, true);
+  } else {
+    callback(null, Error('only image is allowed'));
+  }
+};
+let upload = multer({
+  storage: storage,
+  fileFilter: isImage,
+});
+
+console.log(uploadPath);
 const app = express();
 dotenv.config();
 const jwtSecret = process.env.JWT_SECRET;
@@ -20,17 +58,19 @@ app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
 const store = new MongoDBStore({
   uri: mongoURL,
   collection: 'mySessions',
 });
-store.on('error', function (error) {
-  console.log(error);
-});
+app.use('/uploads', express.static('./uploads'));
 app.use(
   sessions({
     secret: jwtSecret,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { maxAge: oneDay },
     resave: false,
     store: store,
@@ -55,7 +95,7 @@ const isAuth = (req, res, next) => {
   if (req.session.isAuth) {
     next();
   } else {
-    res.status(501).json({ message: 'you arenot auther' });
+    res.status(401).json({ message: 'you arenot auther' });
   }
 };
 //--------------------------------------user endpoint--------------------------------------
@@ -83,11 +123,14 @@ app.post('/register', async (req, res) => {
       jwt.sign({ id: createdUser._id }, jwtSecret, {}, (err, token) => {
         if (err) throw err;
         req.session.isAuth = true;
+        req.session.userId = createdUser._id;
+        req.session.userImage = createdUser.profileImage;
         res
           .cookie('token', token, { sameSite: 'none', secure: true })
           .status(201)
           .json({
             id: createdUser._id,
+            image: createdUser.profileImage,
             token,
           });
       });
@@ -99,8 +142,16 @@ app.post('/register', async (req, res) => {
 });
 
 //profile
-app.get('/profile', isAuth, (req, res) => {
-  res.status(200).json({ message: 'you are auther' });
+app.get('/profile', isAuth, async (req, res) => {
+  const user = await User.findById(
+    { _id: req.session.userId },
+    { password: 0 }
+  );
+
+  res.status(200).json({
+    message: 'you are auther',
+    user,
+  });
 });
 
 //login
@@ -114,6 +165,8 @@ app.post('/login', async (req, res) => {
     if (passOk) {
       jwt.sign({ id: foundUser._id }, jwtSecret, {}, (err, token) => {
         req.session.isAuth = true;
+        req.session.userId = foundUser._id;
+        req.session.userImage = foundUser.profileImage;
         res
           .status(200)
           .cookie('token', token, { sameSite: 'none', secure: true })
@@ -139,6 +192,32 @@ app.post('/logout', (req, res) => {
   res.status(200);
 });
 
+// edit profile
+app.post('/editProfile', upload.single('profileImage'), async (req, res) => {
+  const formData = req.body;
+  const profileImage = req.file;
+  try {
+    await User.findByIdAndUpdate(
+      { _id: formData.id },
+      {
+        username: formData.username,
+        birthDate: formData.birthDate,
+        gender: formData.gender,
+      }
+    );
+    if (profileImage) {
+      await User.findByIdAndUpdate(
+        { _id: formData.id },
+        {
+          profileImage: `./uploads/${profileImage.filename}`,
+        }
+      );
+    }
+    res.status(200).json({ message: 'Profile Updated.' });
+  } catch (error) {
+    res.status(400).json({ message: 'something went wrong.' });
+  }
+});
 app.listen(3000, () => {
   try {
     console.log('Server Running on 3000.');

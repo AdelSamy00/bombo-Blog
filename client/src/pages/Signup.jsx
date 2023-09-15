@@ -162,7 +162,7 @@ export default function Signup() {
           </form>
           <div className="p-4 text-sm bg-white shadow-black  flex flex-col items-center">
             <p className="text-orange-600">
-              Have an account?{' '}
+              Have an account?
               <Link
                 className="font-bold text-blue-600 transition ease-linear hover:text-blue-600 hover:underline"
                 to="/"

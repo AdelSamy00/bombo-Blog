@@ -1,11 +1,36 @@
-import React from 'react';
+import { useState, useEffect, React } from 'react';
 import Header from './Header';
 import FriendsNavbar from './FriendsNavbar';
 import './Fonts.css';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 export default function Profile() {
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [gender, setGender] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+  const navigate = useNavigate();
+  useEffect(() => {
+    axios
+      .get('/profile')
+      .then((res) => {
+        const user = res.data.user;
+        console.log(user);
+        const fullName = user.username.split(' ');
+        setFirstName(fullName[0]);
+        if (fullName[1]) {
+          setLastName(fullName[1]);
+        }
+        setBirthDate(user.birthDate);
+        setGender(user.gender);
+        setProfileImage(user.profileImage);
+      })
+      .catch((err) => {
+        navigate('/');
+      });
+  }, []);
   return (
     <div>
       <header className="sticky top-0 z-30 w-full">
@@ -18,7 +43,7 @@ export default function Profile() {
             {/* profile Settings */}
             <div className="flex flex-col lg:flex-row w-full justify-start items-start gap-5">
               <img
-                src="/blogging.png"
+                src={profileImage}
                 className="w-[300px] h-[300px] sm:ml-32"
                 alt=""
               />
@@ -30,7 +55,7 @@ export default function Profile() {
                       type="text"
                       className="w-32 text-center rounded-xl text-black p-2"
                       disabled
-                      value="Adel"
+                      value={firstName}
                     />
                   </div>
                   <div className="flex flex-row items-center mt-5">
@@ -39,7 +64,7 @@ export default function Profile() {
                       type="text"
                       className="w-32 text-center rounded-xl text-black p-2"
                       disabled
-                      value="Samy"
+                      value={lastName}
                     />
                   </div>
                 </div>
@@ -49,17 +74,46 @@ export default function Profile() {
                     type="text"
                     className="w-32 text-center rounded-xl text-black p-2"
                     disabled
-                    value="15/5/2000"
+                    value={birthDate}
                   />
                 </div>
-                <div className="flex flex-row items-center justify-center mt-5">
-                  <h3 className="mr-5">Gender:</h3>
-                  <input
-                    type="text"
-                    className="w-32 text-center rounded-xl text-black p-2"
-                    disabled
-                    value="Male"
-                  />
+                <div className="flex flex-col lg:flex-row items-center  w-full">
+                  <div className="flex flex-row items-center  mt-5 lg:mr-32">
+                    <h3 className="mr-5">Gender:</h3>
+                    <input
+                      type="text"
+                      className="w-32 text-center rounded-xl text-black p-2"
+                      disabled
+                      value={gender}
+                    />
+                  </div>
+                  <div className="flex flex-row items-center  mt-5 lg:mr-5 ">
+                    <Link
+                      to={'/editprofile'}
+                      className="hidden sm:flex sm:text-orange-500 sm:rounded-md sm:px-5 sm:py-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-10 h-10"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                    </Link>
+                    <Link
+                      to={'/editprofile'}
+                      className="sm:hidden bg-orange-500 text-white rounded-md px-5 py-2"
+                    >
+                      Edit
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
