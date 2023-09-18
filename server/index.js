@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url';
 import { default as connectMongoDBSession } from 'connect-mongodb-session';
 import bodyParser from 'body-parser';
 import { User } from './models/User.js';
+import { Post } from './models/Post.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 export const uploadPath = path.join(
@@ -24,10 +25,30 @@ export const uploadPath = path.join(
   'uploads',
   '/'
 );
+//posts images path
+export const uploadPostPath = path.join(
+  dirname,
+  '..',
+  '..',
+  'Blog',
+  'client',
+  'public',
+  'posts',
+  '/'
+);
 //img storage confing
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, uploadPath);
+  },
+  filename: (req, file, callback) => {
+    callback(null, `image-${Date.now()}-${file.originalname}`);
+  },
+});
+//post Storage
+const postStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, uploadPostPath);
   },
   filename: (req, file, callback) => {
     callback(null, `image-${Date.now()}-${file.originalname}`);
@@ -43,6 +64,10 @@ const isImage = (req, file, callback) => {
 };
 let upload = multer({
   storage: storage,
+  fileFilter: isImage,
+});
+let uploadPost = multer({
+  storage: postStorage,
   fileFilter: isImage,
 });
 
@@ -146,7 +171,7 @@ app.get('/profile', isAuth, async (req, res) => {
   const user = await User.findById(
     { _id: req.session.userId },
     { password: 0 }
-  );
+  ).populate('posts');
 
   res.status(200).json({
     message: 'you are auther',
@@ -218,6 +243,60 @@ app.post('/editProfile', upload.single('profileImage'), async (req, res) => {
     res.status(400).json({ message: 'something went wrong.' });
   }
 });
+
+//add post
+app.post('/addpost', uploadPost.single('postImage'), async (req, res) => {
+  const postData = req.body;
+  const postImage = req.file;
+  const date = postData.createdAt.split('-');
+  postData.createdAt = `${date[2]}-${date[1]}-${date[0]}`;
+  console.log(postData, postImage);
+  const user = await User.findById({ _id: postData.userid });
+  let createdPost;
+  if (postImage) {
+    createdPost = await Post.create({
+      body: postData.description,
+      date: postData.createdAt,
+      postImage: `./posts/${postImage.filename}`,
+      user: user,
+    });
+  } else {
+    createdPost = await Post.create({
+      body: postData.description,
+      createdAt: postData.createdAt,
+      user: user,
+    });
+  }
+  user.posts.push(createdPost);
+  await user.save();
+  console.log(user);
+  res.status(200).json({ message: 'Added Successfully' });
+});
+
+//Get All Posts
+app.get('/allPosts', async (req, res) => {
+  const posts = await Post.find({})
+    .populate('user', {
+      username: 1,
+      profileImage: 1,
+      _id: 1,
+    })
+    .sort({ createdAt: -1 });
+  res.status(200).json({ posts: posts });
+});
+//Display User Posts
+/* app.get('/getUserPost', async (req, res) => {
+  const userid = req.body;
+  console.log(userid);
+  try {
+    const user = await User.findById({ _id: userid }).populate('posts');
+    if (user) {
+      res.status(200).json({ userPosts: user.posts });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}); */
 app.listen(3000, () => {
   try {
     console.log('Server Running on 3000.');

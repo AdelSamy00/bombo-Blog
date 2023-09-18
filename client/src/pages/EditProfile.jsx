@@ -7,13 +7,14 @@ import axios from 'axios';
 import FormData from 'form-data';
 
 export default function EditProfile() {
+  const imageMimeType = /image\/(png|jpg|jpeg)/i;
   const [id, setId] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
   const [profileImage, setProfileImage] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(null);
   const [file, setFile] = useState('');
   const navigate = useNavigate();
   useEffect(() => {
@@ -36,15 +37,37 @@ export default function EditProfile() {
         navigate('/');
       });
   }, []);
-  const handleImage = (e) => {
+  const changeHandler = (e) => {
     setFile(e.target.files[0]);
-    const data = new FileReader();
-    data.addEventListener('load', () => {
-      setImage(data.result);
-    });
-    data.readAsDataURL(e.target.files[0]);
-    setProfileImage(e.target.files[0].name);
+    const image = e.target.files[0];
+    console.log(image);
+    if (!image.type.match(imageMimeType)) {
+      alert('Image mime type is not valid');
+      return;
+    }
+    setImage(image);
   };
+  useEffect(() => {
+    let fileReader,
+      isCancel = false;
+    if (image) {
+      fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        const { result } = e.target;
+        if (result && !isCancel) {
+          setProfileImage(result);
+        }
+      };
+      console.log(image);
+      fileReader.readAsDataURL(image);
+    }
+    return () => {
+      isCancel = true;
+      if (fileReader && fileReader.readyState === 1) {
+        fileReader.abort();
+      }
+    };
+  }, [image]);
 
   const saveEdit = async (e) => {
     e.preventDefault();
@@ -95,7 +118,7 @@ export default function EditProfile() {
                   name="image"
                   id="image"
                   className="ml-14"
-                  onChange={handleImage}
+                  onChange={changeHandler}
                 />
               </div>
               <div className="flex flex-col justify-center items-center lg:items-start border-2 rounded-md border-orange-500 border-dashed py-10  mb-10 w-full ">

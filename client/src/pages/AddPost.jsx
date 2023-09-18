@@ -2,13 +2,24 @@ import React from 'react';
 import Header from './Header';
 import './Fonts.css';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function AddPost() {
+  const getTime = () => {
+    const timestamp = new Date().getTime();
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('sv');
+  };
   const imageMimeType = /image\/(png|jpg|jpeg)/i;
+  const [description, setDescription] = useState('');
+  const [id, setId] = useState('');
   const [image, setImage] = useState(null);
+  const [file, setFile] = useState('');
   const [fileDataURL, setFileDataURL] = useState(null);
+  const navigate = useNavigate();
   const changeHandler = (e) => {
+    setFile(e.target.files[0]);
     const image = e.target.files[0];
     console.log(image);
     if (!image.type.match(imageMimeType)) {
@@ -20,13 +31,11 @@ export default function AddPost() {
   useEffect(() => {
     let fileReader,
       isCancel = false;
-    console.log(image);
     if (image) {
       fileReader = new FileReader();
       fileReader.onload = (e) => {
         const { result } = e.target;
         if (result && !isCancel) {
-          console.log(result);
           setFileDataURL(result);
         }
       };
@@ -39,19 +48,58 @@ export default function AddPost() {
       }
     };
   }, [image]);
+  useEffect(() => {
+    axios
+      .get('/profile')
+      .then((res) => {
+        const user = res.data.user;
+        setId(user._id);
+      })
+      .catch((err) => {
+        navigate('/');
+      });
+  }, []);
+  const addPost = async (e) => {
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append('userid', id);
+    formData.append('description', description);
+    formData.append('postImage', file);
+    formData.append('createdAt', getTime());
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        'Access-Control-Allow-Headers':
+          'append,delete,entries,foreach,get,has,keys,set,values,Authorization',
+      },
+    };
+    axios
+      .post('/addpost', formData, config)
+      .then((res) => {
+        alert(res.data.message);
+        navigate('/home');
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
   return (
     <div>
       <header className="sticky top-0 z-30 w-full">
         <Header />
       </header>
       <section>
-        <form action="#">
+        <form onSubmit={addPost}>
           <div className="flex flex-col md:flex-row ">
             <div className="flex flex-col bg-white rounded-md w-full md:w-5/6 h-[35vh] md:h-[48vh] relative px-10 pt-5">
               <div className="flex flex-col">
                 <label htmlFor="description">Add post description:</label>
                 <textarea
                   name="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   id="description"
                   className="bg-gray-200 rounded-lg"
                   cols="30"
@@ -110,7 +158,7 @@ export default function AddPost() {
           <div className="flex flex-col  items-center ">
             <button
               type="submit"
-              className="bg-orange-400 w-[200px] h-[50px] mt-5 text-white rounded-md"
+              className="bg-orange-400 w-[200px] h-[50px] md:mt-28 text-white rounded-md"
             >
               Add Post
             </button>

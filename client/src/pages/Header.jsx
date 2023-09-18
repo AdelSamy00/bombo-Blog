@@ -11,7 +11,7 @@ export default function Header() {
     axios
       .get('/profile')
       .then((res) => {
-        console.log(res);
+        //console.log(res);
       })
       .catch((err) => {
         navigate('/');

@@ -27,6 +27,12 @@ const userSchema = new Schema({
     type: String,
     default: './unknown.png',
   },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
 });
 
 export const User = mongoose.model('User', userSchema);

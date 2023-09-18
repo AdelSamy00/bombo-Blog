@@ -1,7 +1,5 @@
 import Header from './Header';
 import './Fonts.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import FriendsNavbar from './FriendsNavbar';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, React } from 'react';
@@ -9,14 +7,23 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 function Index() {
   const [profileImage, setProfileImage] = useState('');
+  const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     axios
       .get('/profile')
       .then((res) => {
-        console.log(res);
+        //console.log(res);
         const user = res.data.user;
         setProfileImage(user.profileImage);
+        axios
+          .get('/allPosts')
+          .then((res) => {
+            setPosts(res.data.posts);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         navigate('/');
@@ -47,59 +54,44 @@ function Index() {
               </Link>
             </div>
             {/* posts */}
+
             <div className="flex flex-col sm:px-20 gap-7">
               {/* post 1 */}
-              <div className="">
-                {/* post header */}
-                <div className="flex flex-row items-center gap-3 p-5  rounded-t-xl bg-gray-400">
-                  <img src="/blogging.png" className="w-10 h-10 mr-2" alt="" />
-                  <div className="font2 flex flex-col items-start">
-                    <p>Adel Samy</p>
-                    <p className="text-xs text-gray-800">5/12/2024</p>
-                  </div>
-                </div>
-                {/* post content */}
-                <div className="flex flex-col  gap-3 p-5 md:pl-10 rounded-b-xl bg-gray-300">
-                  {/* post desc */}
-                  <p>
-                    Hello everyone , I’m so very happy to make this application
-                  </p>
-                  {/* post photo */}
-                  <div className="flex items-center justify-center">
-                    <img
-                      src="/blogging.png"
-                      className=" md:w-[400px] md:h-[400px]  mr-2"
-                      alt=""
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* post 2 */}
-              <div className="">
-                {/* post header */}
-                <div className="flex flex-row items-center gap-3 p-5  rounded-t-xl bg-gray-400">
-                  <img src="/blogging.png" className="w-10 h-10 mr-2" alt="" />
-                  <div className="font2 flex flex-col items-start">
-                    <p>Adel Samy</p>
-                    <p className="text-xs text-gray-800">5/12/2024</p>
-                  </div>
-                </div>
-                {/* post content */}
-                <div className="flex flex-col  gap-3 p-5 md:pl-10 rounded-b-xl bg-gray-300">
-                  {/* post desc */}
-                  <p>
-                    Hello everyone , I’m so very happy to make this application
-                  </p>
-                  {/* post photo */}
-                  <div className="flex items-center justify-center">
-                    <img
-                      src="/blogging.png"
-                      className=" md:w-[400px] md:h-[400px]  mr-2"
-                      alt=""
-                    />
-                  </div>
-                </div>
-              </div>
+              {posts.length > 0
+                ? posts.map((el, i) => {
+                    return el.user.map((user, i) => {
+                      return (
+                        <div className="" key={i}>
+                          {/* post header */}
+                          <div className="flex flex-row items-center gap-3 p-5  rounded-t-xl bg-gray-400">
+                            <img
+                              src={user.profileImage}
+                              className="w-10 h-10 mr-2"
+                              alt=""
+                            />
+                            <div className="font2 flex flex-col items-start">
+                              <p>{user.username}</p>
+                              <p className="text-xs text-gray-800">{el.date}</p>
+                            </div>
+                          </div>
+                          {/* post content */}
+                          <div className="flex flex-col  gap-3 p-5 md:pl-10 rounded-b-xl bg-gray-300">
+                            {/* post desc */}
+                            <p>{el.body}</p>
+                            {/* post photo */}
+                            <div className="flex items-center justify-center">
+                              <img
+                                src={el.postImage}
+                                className=" md:w-[600px] md:h-[430px] rounded-md  mr-2"
+                                alt=""
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    });
+                  })
+                : ''}
             </div>
           </div>
         </div>

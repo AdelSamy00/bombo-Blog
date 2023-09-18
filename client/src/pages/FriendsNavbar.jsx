@@ -16,6 +16,10 @@ const FriendsNavbar = () => {
           <img src="/unknown.png" className="w-10 h-10" alt="" />
           <span className="font2 text-orange-500 text-xl">Youssef</span>
         </div>
+        <div className="pt-5 flex gap-2 font-bold items-center pl-5 ">
+          <img src="/unknown.png" className="w-10 h-10" alt="" />
+          <span className="font2 text-orange-500 text-xl">Shadi</span>
+        </div>
       </div>
     </>
   );
