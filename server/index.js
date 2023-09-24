@@ -168,10 +168,9 @@ app.post('/register', async (req, res) => {
 
 //profile
 app.get('/profile', isAuth, async (req, res) => {
-  const user = await User.findById(
-    { _id: req.session.userId },
-    { password: 0 }
-  ).populate('posts');
+  const user = await User.findById({ _id: req.session.userId }, { password: 0 })
+    .populate('posts')
+    .populate('friends');
 
   res.status(200).json({
     message: 'you are auther',
@@ -280,9 +279,61 @@ app.get('/allPosts', async (req, res) => {
       username: 1,
       profileImage: 1,
       _id: 1,
+      email: 1,
     })
     .sort({ createdAt: -1 });
   res.status(200).json({ posts: posts });
+});
+
+/* //Add Friend
+app.post('/addFriend', async (req, res) => {
+  const { friendId, id } = req.body;
+  console.log(friendId, id);
+  const sender = await User.findById({ _id: id });
+  const receiver = await User.findById({ _id: friendId });
+  const friendRequest = await Friend.create({
+    status: 'pending',
+    request: [{ sender, receiver }],
+  });
+  sender.friends.push(friendRequest);
+  sender.save();
+  receiver.friends.push(friendRequest);
+  receiver.save();
+  res.status(200).json({ message: 'send requst' });
+}); */
+//Add Friend
+app.post('/addFriend', async (req, res) => {
+  const { friendId, id } = req.body;
+  console.log(friendId, id);
+  const sender = await User.findById({ _id: id });
+  const receiver = await User.findById({ _id: friendId });
+  /* const friendRequest = await Friend.create({
+    status: 'pending',
+    request: [{ sender, receiver }],
+  }); */
+  const RequestToSender = {
+    status: 'pending',
+    request: 'sender',
+    friend: receiver,
+  };
+  const RequestToReceiver = {
+    status: 'pending',
+    request: 'receiver',
+    friend: sender,
+  };
+  sender.friends.push(RequestToSender);
+  sender.save();
+  //console.log(sender);
+  receiver.friends.push(RequestToReceiver);
+  receiver.save();
+  res.status(200).send({ message: 'send request' });
+});
+//Get All Friends for user
+app.get('/allFriends/:id', async (req, res) => {
+  const { id } = req.params;
+  //console.log(id);
+  const user = await User.findById({ _id: id });
+  res.status(200).json({ friends: user.friends });
 });
 //Display User Posts
 /* app.get('/getUserPost', async (req, res) => {

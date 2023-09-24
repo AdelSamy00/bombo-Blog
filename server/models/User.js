@@ -33,6 +33,28 @@ const userSchema = new Schema({
       ref: 'Post',
     },
   ],
+  /* friends: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Friend',
+    },
+  ], */
+  friends: [
+    {
+      request: {
+        type: String,
+        required: true,
+      },
+      status: {
+        type: String,
+        required: true,
+      },
+      friend: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
 });
 
 export const User = mongoose.model('User', userSchema);
