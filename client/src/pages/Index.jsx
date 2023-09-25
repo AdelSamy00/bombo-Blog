@@ -1,7 +1,7 @@
 import Header from './Header';
 import './Fonts.css';
 import FriendsNavbar from './FriendsNavbar';
-import { Link, redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect, React } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -35,6 +35,17 @@ function Index() {
         navigate('/');
       });
   }, []);
+  const getAllFriends = async () => {
+    axios
+      .get(`/allFriends/${id}`)
+      .then((res) => {
+        //console.log(res);
+        setFriends(res.data.friends);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const addFriend = async (friendId, e) => {
     e.preventDefault();
     axios
@@ -42,16 +53,35 @@ function Index() {
         friendId,
         id,
       })
-      .then((res) => {
-        axios
-          .get(`/allFriends/${id}`)
-          .then((res) => {
-            setFriends(res.data.friends);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        alert('send Request succcessfully.');
+      .then(async (res) => {
+        //console.log(res);
+        await getAllFriends();
+        //alert('send Request succcessfully.');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const acceptFriend = async (requestId, e) => {
+    e.preventDefault();
+    axios
+      .put('/approvalFriendRequest', { requestId })
+      .then(async (res) => {
+        console.log(res);
+        await getAllFriends();
+        alert('You are now his friend.');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const cancelFriend = async (requestId, e) => {
+    e.preventDefault();
+    axios
+      .delete(`/cancelFriendRequest/${requestId}`)
+      .then(async (res) => {
+        //console.log(res);
+        await getAllFriends();
       })
       .catch((err) => {
         console.log(err);
@@ -103,7 +133,11 @@ function Index() {
                             </div>
                             {/* check if him the same user or not */}
                             {user.email !== email ? (
-                              !friends.find((fr) => fr.friend === user._id) ? (
+                              !friends.find(
+                                (fr) =>
+                                  fr.sender === user._id ||
+                                  fr.receiver === user._id
+                              ) ? (
                                 <div className="flex flex-row w-full justify-end">
                                   <button
                                     className="bg-white rounded-lg p-3"
@@ -131,10 +165,7 @@ function Index() {
                               ) : (
                                 friends.map((fr, i) => {
                                   if (fr.status === 'pending') {
-                                    if (
-                                      fr.request === 'sender' &&
-                                      fr.friend === user._id
-                                    ) {
+                                    if (fr.receiver === user._id) {
                                       return (
                                         <div
                                           className="flex flex-row w-full justify-end"
@@ -142,7 +173,9 @@ function Index() {
                                         >
                                           <button
                                             className="bg-gray-300 rounded-lg p-3"
-                                            onClick={() => addFriend(user._id)}
+                                            onClick={(e) =>
+                                              cancelFriend(fr._id, e)
+                                            }
                                           >
                                             <div className="flex flex-row items-center gap-2 w-full ">
                                               <p>cancel Request</p>
@@ -164,10 +197,7 @@ function Index() {
                                           </button>
                                         </div>
                                       );
-                                    } else if (
-                                      fr.request === 'receiver' &&
-                                      fr.friend === user._id
-                                    ) {
+                                    } else if (fr.sender === user._id) {
                                       return (
                                         <div
                                           className="flex flex-row w-full justify-end"
@@ -175,7 +205,9 @@ function Index() {
                                         >
                                           <button
                                             className="bg-gray-300 rounded-lg p-3"
-                                            onClick={() => addFriend(user._id)}
+                                            onClick={(e) =>
+                                              acceptFriend(fr._id, e)
+                                            }
                                           >
                                             <div className="flex flex-row items-center gap-2 w-full ">
                                               <p>Accept Request</p>
@@ -198,7 +230,11 @@ function Index() {
                                         </div>
                                       );
                                     }
-                                  } else if (fr.status === 'approval') {
+                                  } else if (
+                                    fr.status === 'approval' &&
+                                    (fr.sender === user._id ||
+                                      fr.receiver === user._id)
+                                  ) {
                                     //show him he is friend
                                     return (
                                       <div
@@ -220,33 +256,6 @@ function Index() {
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                              />
-                                            </svg>
-                                          </div>
-                                        </button>
-                                      </div>
-                                    );
-                                  } else {
-                                    return (
-                                      <div className="flex flex-row w-full justify-end">
-                                        <button
-                                          className="bg-white rounded-lg p-3"
-                                          onClick={() => addFriend(user._id)}
-                                        >
-                                          <div className="flex flex-row items-center gap-2 w-full ">
-                                            <p>Add Friend</p>
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              fill="none"
-                                              viewBox="0 0 24 24"
-                                              strokeWidth={1.5}
-                                              stroke="currentColor"
-                                              className="w-6 h-6 text-orange-500"
-                                            >
-                                              <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"
                                               />
                                             </svg>
                                           </div>

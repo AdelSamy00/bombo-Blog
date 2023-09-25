@@ -13,6 +13,7 @@ import { default as connectMongoDBSession } from 'connect-mongodb-session';
 import bodyParser from 'body-parser';
 import { User } from './models/User.js';
 import { Post } from './models/Post.js';
+import { Friend } from './models/Friend.js';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 export const uploadPath = path.join(
@@ -307,11 +308,16 @@ app.post('/addFriend', async (req, res) => {
   console.log(friendId, id);
   const sender = await User.findById({ _id: id });
   const receiver = await User.findById({ _id: friendId });
-  /* const friendRequest = await Friend.create({
+  const friendRequest = await Friend.create({
     status: 'pending',
-    request: [{ sender, receiver }],
-  }); */
-  const RequestToSender = {
+    sender,
+    receiver,
+  });
+  sender.friends.push(friendRequest);
+  sender.save();
+  receiver.friends.push(friendRequest);
+  receiver.save();
+  /* const RequestToSender = {
     status: 'pending',
     request: 'sender',
     friend: receiver,
@@ -325,14 +331,70 @@ app.post('/addFriend', async (req, res) => {
   sender.save();
   //console.log(sender);
   receiver.friends.push(RequestToReceiver);
-  receiver.save();
+  receiver.save(); */
   res.status(200).send({ message: 'send request' });
 });
 //Get All Friends for user
 app.get('/allFriends/:id', async (req, res) => {
   const { id } = req.params;
   //console.log(id);
-  const user = await User.findById({ _id: id });
+  const user = await User.findById({ _id: id }).populate('friends');
+  res.status(200).json({ friends: user.friends });
+});
+// aprovel friend request
+app.put('/approvalFriendRequest', async (req, res) => {
+  const { requestId } = req.body;
+  console.log(requestId);
+  const request = await Friend.findByIdAndUpdate(
+    { _id: requestId },
+    { status: 'approval' }
+  );
+  res.status(200).json({ message: 'accept' });
+});
+// cancel friend request
+app.delete('/cancelFriendRequest/:requestId', async (req, res) => {
+  const { requestId } = req.params;
+  console.log(requestId);
+  const friendRequest = await Friend.findByIdAndDelete({ _id: requestId });
+  console.log(friendRequest);
+  const sender = friendRequest.sender;
+  const receiver = friendRequest.receiver;
+  await User.findByIdAndUpdate(
+    { _id: sender._id },
+    { $pull: { friends: requestId } }
+  );
+  await User.findByIdAndUpdate(
+    { _id: receiver._id },
+    { $pull: { friends: requestId } }
+  );
+  res.status(200).json({ message: 'Canceled' });
+});
+//Get Approval Friends
+app.get('/allApprovalFriends/:id', async (req, res) => {
+  const { id } = req.params;
+  //console.log(id);
+  const user = await User.findById({ _id: id }).populate({
+    path: 'friends',
+    match: { status: 'approval' },
+    populate: [
+      {
+        path: 'sender',
+        select: {
+          _id: 1,
+          username: 1,
+          profileImage: 1,
+        },
+      },
+      {
+        path: 'receiver',
+        select: {
+          _id: 1,
+          username: 1,
+          profileImage: 1,
+        },
+      },
+    ],
+  });
   res.status(200).json({ friends: user.friends });
 });
 //Display User Posts

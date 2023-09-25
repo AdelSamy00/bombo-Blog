@@ -33,13 +33,13 @@ const userSchema = new Schema({
       ref: 'Post',
     },
   ],
-  /* friends: [
+  friends: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Friend',
     },
-  ], */
-  friends: [
+  ],
+  /* friends: [
     {
       request: {
         type: String,
@@ -54,7 +54,7 @@ const userSchema = new Schema({
         ref: 'User',
       },
     },
-  ],
+  ], */
 });
 
 export const User = mongoose.model('User', userSchema);
