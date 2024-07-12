@@ -17,7 +17,7 @@ export default function Profile() {
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         const user = res.data.user;
         //console.log(user);

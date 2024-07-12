@@ -28,7 +28,13 @@ export default function Signup() {
   const submitHandler = async (e) => {
     e.preventDefault();
     await axios
-      .post('/register', { username, email, password, birthDate, gender })
+      .post('/api/user/register', {
+        username,
+        email,
+        password,
+        birthDate,
+        gender,
+      })
       .then((res) => {
         console.log(res);
         if (res.status == 201) {

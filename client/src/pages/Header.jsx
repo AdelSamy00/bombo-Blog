@@ -9,7 +9,7 @@ export default function Header() {
   const [toggleMenu, setToggleMenu] = useState(false);
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         //console.log(res);
       })

@@ -14,7 +14,7 @@ function Index() {
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         console.log(res);
         const user = res.data.user;
@@ -23,7 +23,7 @@ function Index() {
         setId(user._id);
         setFriends(user.friends);
         axios
-          .get('/allPosts')
+          .get('/api/post/')
           .then((res) => {
             setPosts(res.data.posts);
           })
@@ -32,12 +32,13 @@ function Index() {
           });
       })
       .catch((err) => {
+        console.log(err);
         navigate('/');
       });
   }, []);
   const getAllFriends = async () => {
     axios
-      .get(`/allFriends/${id}`)
+      .get(`/api/friends/${id}`)
       .then((res) => {
         //console.log(res);
         setFriends(res.data.friends);
@@ -49,7 +50,7 @@ function Index() {
   const addFriend = async (friendId, e) => {
     e.preventDefault();
     axios
-      .post('/addFriend', {
+      .post('/api/friends/', {
         friendId,
         id,
       })
@@ -65,7 +66,7 @@ function Index() {
   const acceptFriend = async (requestId, e) => {
     e.preventDefault();
     axios
-      .put('/approvalFriendRequest', { requestId })
+      .put('/api/friends/', { requestId })
       .then(async (res) => {
         console.log(res);
         await getAllFriends();
@@ -78,7 +79,7 @@ function Index() {
   const cancelFriend = async (requestId, e) => {
     e.preventDefault();
     axios
-      .delete(`/cancelFriendRequest/${requestId}`)
+      .delete(`/api/friends/${requestId}`)
       .then(async (res) => {
         //console.log(res);
         await getAllFriends();

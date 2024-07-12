@@ -9,7 +9,7 @@ export default function Login() {
   const submitHandler = async (e) => {
     e.preventDefault();
     await axios
-      .post('/login', { email, password })
+      .post('/api/user/login', { email, password })
       .then((res) => {
         console.log(res);
         if (res.status == 200) {

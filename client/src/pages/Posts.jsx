@@ -14,7 +14,7 @@ export default function Posts() {
   const [toggleMenu, setToggleMenu] = useState(false);
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         const user = res.data.user;
         setUsername(user.username);

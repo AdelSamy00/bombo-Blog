@@ -8,11 +8,11 @@ const FriendsNavbar = () => {
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         const user = res.data.user;
         setId(user._id);
-        axios.get(`/allApprovalFriends/${user._id}`).then((res) => {
+        axios.get(`/api/friends/allApprovalFriends/${user._id}`).then((res) => {
           console.log(res);
           setApprovalFriends(res.data.friends);
         });

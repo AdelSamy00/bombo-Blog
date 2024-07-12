@@ -5,6 +5,7 @@ import './Fonts.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FormData from 'form-data';
+import { handleFileUpload } from '../utils';
 
 export default function EditProfile() {
   const imageMimeType = /image\/(png|jpg|jpeg)/i;
@@ -19,7 +20,7 @@ export default function EditProfile() {
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         const user = res.data.user;
         console.log(user);
@@ -69,7 +70,7 @@ export default function EditProfile() {
     };
   }, [image]);
 
-  const saveEdit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let username = firstName + ' ' + lastName;
     let formData = new FormData();
@@ -89,7 +90,7 @@ export default function EditProfile() {
     };
     console.log(formData);
     axios
-      .post('/editProfile', formData, config)
+      .put('/api/user/', formData, config)
       .then((res) => {
         alert(res.data.message);
       })
@@ -103,7 +104,7 @@ export default function EditProfile() {
         <Header />
       </header>
       <section>
-        <form onSubmit={saveEdit}>
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col bg-white rounded-md w-full  min-h-screen relative px-10 pt-10">
             {/* profile Settings */}
             <div className="flex flex-col lg:flex-row items-center w-full justify-start gap-5">
@@ -179,7 +180,7 @@ export default function EditProfile() {
             <div className="flex flex-row items-center justify-center  mt-5 lg:mr-5 ">
               <button
                 className=" bg-orange-500 text-white rounded-md px-5 py-2"
-                onClick={saveEdit}
+                onClick={handleSubmit}
               >
                 Save
               </button>

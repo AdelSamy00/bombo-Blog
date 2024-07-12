@@ -50,7 +50,7 @@ export default function AddPost() {
   }, [image]);
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/api/user/profile')
       .then((res) => {
         const user = res.data.user;
         setId(user._id);
@@ -76,7 +76,7 @@ export default function AddPost() {
       },
     };
     axios
-      .post('/addpost', formData, config)
+      .post('/api/post/', formData, config)
       .then((res) => {
         alert(res.data.message);
         navigate('/home');
