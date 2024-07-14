@@ -8,11 +8,13 @@ import Posts from './pages/Posts';
 import Friends from './pages/Friends';
 import AddPost from './pages/AddPost';
 import EditProfile from './pages/EditProfile';
+import Header from './components/Header.jsx';
 function App() {
   axios.defaults.baseURL = 'http://localhost:3000';
   axios.defaults.withCredentials = true;
   return (
     <>
+      <Header />
       <Routes>
         <Route path="/register" element={<Signup />} />
         <Route path="/" element={<Login />} />

@@ -1,7 +1,7 @@
 import { useState, useEffect, React } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Fonts.css';
+import '../pages/Fonts.css';
 import { useSelector } from 'react-redux';
 const FriendsNavbar = () => {
   const [id, setId] = useState('');

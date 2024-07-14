@@ -1,6 +1,4 @@
 import React from 'react';
-import Header from './Header';
-import FriendsNavbar from './FriendsNavbar';
 import './Fonts.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,9 +6,6 @@ export default function Friends() {
   const [toggleMenu, setToggleMenu] = useState(false);
   return (
     <div>
-      <header className="sticky top-0 z-30 w-full">
-        <Header />
-      </header>
       <section>
         <div className="flex justify-center w-full pb-5">
           <div className="flex flex-col  bg-white rounded-md w-full h-full md:w-5/6 min-h-screen  px-10 pt-10">

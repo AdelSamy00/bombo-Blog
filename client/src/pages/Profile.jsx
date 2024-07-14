@@ -1,6 +1,5 @@
 import { useState, useEffect, React } from 'react';
-import Header from './Header';
-import FriendsNavbar from './FriendsNavbar';
+import FriendsNavbar from '../components/FriendsNavbar';
 import './Fonts.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -32,9 +31,6 @@ export default function Profile() {
   }, []);
   return (
     <div>
-      <header className="sticky top-0 z-30 w-full">
-        <Header />
-      </header>
       <section>
         <div className="flex justify-end">
           <FriendsNavbar />

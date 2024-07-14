@@ -1,6 +1,4 @@
 import { useState, useEffect, React } from 'react';
-import Header from './Header';
-import FriendsNavbar from './FriendsNavbar';
 import './Fonts.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -93,9 +91,6 @@ export default function EditProfile() {
   };
   return (
     <div>
-      <header className="sticky top-0 z-30 w-full">
-        <Header />
-      </header>
       <section>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col bg-white rounded-md w-full  min-h-screen relative px-10 pt-10">

@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from './Header';
 import './Fonts.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -81,9 +80,6 @@ export default function AddPost() {
   };
   return (
     <div>
-      <header className="sticky top-0 z-30 w-full">
-        <Header />
-      </header>
       <section>
         <form onSubmit={addPost}>
           <div className="flex flex-col md:flex-row ">

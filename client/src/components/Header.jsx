@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
-import './Fonts.css';
+import '../pages/Fonts.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
@@ -11,7 +11,7 @@ export default function Header() {
   const [toggleMenu, setToggleMenu] = useState(false);
   const dispatch = useDispatch();
   return (
-    <div>
+    <div className="sticky top-0 z-30 w-full">
       <nav>
         <div className="max-w-8xl mx-auto bg-orange-500">
           <div className="flex mx-auto justify-between w-5/6 ">
