@@ -4,6 +4,7 @@ import FriendsNavbar from './FriendsNavbar';
 import './Fonts.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 export default function Profile() {
   const [id, setId] = useState('');
   const [toggleMenu, setToggleMenu] = useState(false);
@@ -15,27 +16,19 @@ export default function Profile() {
   const [profileImage, setProfileImage] = useState('');
   const [posts, setPosts] = useState(['']);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
-    axios
-      .get('/api/user/profile')
-      .then((res) => {
-        const user = res.data.user;
-        //console.log(user);
-        const fullName = user.username.split(' ');
-        setFirstName(fullName[0]);
-        if (fullName[1]) {
-          setLastName(fullName[1]);
-        }
-        setUsername(user.username);
-        setBirthDate(user.birthDate);
-        setGender(user.gender);
-        setProfileImage(user.profileImage);
-        setId(user._id);
-        setPosts(user.posts);
-      })
-      .catch((err) => {
-        navigate('/');
-      });
+    const fullName = user.username.split(' ');
+    setFirstName(fullName[0]);
+    if (fullName[1]) {
+      setLastName(fullName[1]);
+    }
+    setUsername(user.username);
+    setBirthDate(user.birthDate);
+    setGender(user.gender);
+    setProfileImage(user.profileImage);
+    setId(user._id);
+    setPosts(user.posts);
   }, []);
   return (
     <div>

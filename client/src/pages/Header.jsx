@@ -4,19 +4,12 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 import './Fonts.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { Logout } from '../redux/UserSlice';
 export default function Header() {
   const navigate = useNavigate();
   const [toggleMenu, setToggleMenu] = useState(false);
-  useEffect(() => {
-    axios
-      .get('/api/user/profile')
-      .then((res) => {
-        //console.log(res);
-      })
-      .catch((err) => {
-        navigate('/');
-      });
-  }, []);
+  const dispatch = useDispatch();
   return (
     <div>
       <nav>
@@ -55,6 +48,7 @@ export default function Header() {
               <button
                 onClick={() => {
                   axios.post('/logout');
+                  dispatch(Logout());
                   navigate('/');
                 }}
                 className="font p-2 px-3 bg-white text-orange-500 rounded-lg"

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, React } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 function Index() {
   const [id, setId] = useState('');
   const [profileImage, setProfileImage] = useState('');
@@ -12,8 +13,9 @@ function Index() {
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState([]);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
-    axios
+    /*     axios
       .get('/api/user/profile')
       .then((res) => {
         console.log(res);
@@ -22,18 +24,24 @@ function Index() {
         setEmail(user.email);
         setId(user._id);
         setFriends(user.friends);
-        axios
-          .get('/api/post/')
-          .then((res) => {
-            setPosts(res.data.posts);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        
       })
       .catch((err) => {
         console.log(err);
         navigate('/');
+      }); */
+    if (!user) navigate('/');
+    setProfileImage(user.profileImage);
+    setEmail(user.email);
+    setId(user._id);
+    setFriends(user.friends);
+    axios
+      .get('/api/post/')
+      .then((res) => {
+        setPosts(res.data.posts);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, []);
   const getAllFriends = async () => {

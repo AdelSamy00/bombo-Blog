@@ -36,10 +36,9 @@ export default function Signup() {
         gender,
       })
       .then((res) => {
-        console.log(res);
         if (res.status == 201) {
           alert('user created.');
-          navigate('/home');
+          navigate('/');
         }
       })
       .catch((err) => {

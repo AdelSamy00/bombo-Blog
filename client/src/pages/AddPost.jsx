@@ -4,6 +4,7 @@ import './Fonts.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 export default function AddPost() {
   const getTime = () => {
@@ -18,6 +19,7 @@ export default function AddPost() {
   const [file, setFile] = useState('');
   const [fileDataURL, setFileDataURL] = useState(null);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   const changeHandler = (e) => {
     setFile(e.target.files[0]);
     const image = e.target.files[0];
@@ -49,15 +51,7 @@ export default function AddPost() {
     };
   }, [image]);
   useEffect(() => {
-    axios
-      .get('/api/user/profile')
-      .then((res) => {
-        const user = res.data.user;
-        setId(user._id);
-      })
-      .catch((err) => {
-        navigate('/');
-      });
+    setId(user?._id);
   }, []);
   const addPost = async (e) => {
     e.preventDefault();

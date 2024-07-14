@@ -1,9 +1,12 @@
 import { useState, React } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import { SetUser } from '../redux/UserSlice.js';
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const submitHandler = async (e) => {
@@ -13,6 +16,7 @@ export default function Login() {
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
+          dispatch(SetUser({ ...res.data.user, token: res.data.token }));
           alert('login successfully');
           navigate('/home');
         }

@@ -2,20 +2,18 @@ import { useState, useEffect, React } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Fonts.css';
+import { useSelector } from 'react-redux';
 const FriendsNavbar = () => {
   const [id, setId] = useState('');
   const [approvalFriends, setApprovalFriends] = useState([]);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
     axios
-      .get('/api/user/profile')
+      .get(`/api/friends/allApprovalFriends/${user._id}`)
       .then((res) => {
-        const user = res.data.user;
-        setId(user._id);
-        axios.get(`/api/friends/allApprovalFriends/${user._id}`).then((res) => {
-          console.log(res);
-          setApprovalFriends(res.data.friends);
-        });
+        console.log(res);
+        setApprovalFriends(res.data.friends);
       })
       .catch((err) => {
         navigate('/');

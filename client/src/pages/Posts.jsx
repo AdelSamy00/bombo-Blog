@@ -5,6 +5,7 @@ import './Fonts.css';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 export default function Posts() {
   const [username, setUsername] = useState('');
@@ -12,18 +13,11 @@ export default function Posts() {
   const [posts, setPosts] = useState(['']);
   const navigate = useNavigate();
   const [toggleMenu, setToggleMenu] = useState(false);
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
-    axios
-      .get('/api/user/profile')
-      .then((res) => {
-        const user = res.data.user;
-        setUsername(user.username);
-        setProfileImage(user.profileImage);
-        setPosts(user.posts);
-      })
-      .catch((err) => {
-        navigate('/');
-      });
+    setUsername(user?.username);
+    setProfileImage(user?.profileImage);
+    setPosts(user?.posts);
   }, []);
   return (
     <div>

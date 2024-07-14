@@ -7,9 +7,7 @@ dotenv.config();
 const jwtSecret = process.env.JWT_SECRET;
 const bcryptSalt = bcrypt.genSaltSync(10);
 export const register = async (req, res) => {
-  console.log(req.body);
   const { username, email, password, birthDate, gender } = req.body;
-  console.log(username, email, password, birthDate, gender);
   try {
     const hashedPassword = bcrypt.hashSync(password, bcryptSalt);
     const user = await User.findOne({ email });
@@ -26,19 +24,9 @@ export const register = async (req, res) => {
         gender,
       });
 
-      jwt.sign({ id: createdUser._id }, jwtSecret, {}, (err, token) => {
-        if (err) throw err;
-        req.session.isAuth = true;
-        req.session.userId = createdUser._id;
-        req.session.userImage = createdUser.profileImage;
-        res
-          .cookie('token', token, { sameSite: 'none', secure: true })
-          .status(201)
-          .json({
-            id: createdUser._id,
-            image: createdUser.profileImage,
-            token,
-          });
+      if (err) throw err;
+      res.status(201).json({
+        message: 'user created',
       });
     }
   } catch (error) {
@@ -52,10 +40,14 @@ export const login = async (req, res) => {
     console.log(req.body);
     const { email, password } = req.body;
     console.log(email, password);
-    const foundUser = await User.findOne({ email });
+    const foundUser = await User.findOne({ email }).populate([
+      'posts',
+      'friends',
+    ]);
     if (foundUser) {
       const passOk = bcrypt.compareSync(password, foundUser.password);
       if (passOk) {
+        foundUser.password = undefined;
         jwt.sign({ id: foundUser._id }, jwtSecret, {}, (err, token) => {
           req.session.isAuth = true;
           req.session.userId = foundUser._id;
@@ -64,8 +56,7 @@ export const login = async (req, res) => {
             .status(200)
             .cookie('token', token, { sameSite: 'none', secure: true })
             .json({
-              id: foundUser._id,
-              username: foundUser.username,
+              user: foundUser,
               token,
             });
         });

@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FormData from 'form-data';
 import { handleFileUpload } from '../utils';
+import { useSelector } from 'react-redux';
 
 export default function EditProfile() {
   const imageMimeType = /image\/(png|jpg|jpeg)/i;
@@ -18,25 +19,17 @@ export default function EditProfile() {
   const [image, setImage] = useState(null);
   const [file, setFile] = useState('');
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   useEffect(() => {
-    axios
-      .get('/api/user/profile')
-      .then((res) => {
-        const user = res.data.user;
-        console.log(user);
-        const fullName = user.username.split(' ');
-        setFirstName(fullName[0]);
-        if (fullName[1]) {
-          setLastName(fullName[1]);
-        }
-        setBirthDate(user.birthDate);
-        setGender(user.gender);
-        setProfileImage(user.profileImage);
-        setId(user._id);
-      })
-      .catch((err) => {
-        navigate('/');
-      });
+    const fullName = user.username.split(' ');
+    setFirstName(fullName[0]);
+    if (fullName[1]) {
+      setLastName(fullName[1]);
+    }
+    setBirthDate(user.birthDate);
+    setGender(user.gender);
+    setProfileImage(user.profileImage);
+    setId(user._id);
   }, []);
   const changeHandler = (e) => {
     setFile(e.target.files[0]);
