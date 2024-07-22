@@ -47,7 +47,7 @@ export default function Header() {
             <div className="md:flex items-center hidden">
               <button
                 onClick={() => {
-                  axios.post('/logout');
+                  axios.post('/api/user/logout');
                   dispatch(Logout());
                   navigate('/');
                 }}
@@ -78,7 +78,16 @@ export default function Header() {
               <Link to={'/posts'} className="flex justify-center">
                 Your Posts
               </Link>
-              <button className="p-2 bg-white text-orange-500">Logout</button>
+              <button
+                className="p-2 bg-white text-orange-500"
+                onClick={() => {
+                  axios.post('/api/user/logout');
+                  dispatch(Logout());
+                  navigate('/');
+                }}
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>

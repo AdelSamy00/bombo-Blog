@@ -1,5 +1,6 @@
 import { Post } from '../models/Post.js';
 import { User } from '../models/User.js';
+import JWT from 'jsonwebtoken';
 
 export const addPosts = async (req, res) => {
   const postData = req.body;
@@ -30,13 +31,44 @@ export const addPosts = async (req, res) => {
 };
 
 export const getAllPosts = async (req, res) => {
-  const posts = await Post.find({})
+  const { token, search } = req.query;
+  const userToken = JWT.verify(token, process.env.JWT_SECRET);
+  const userId = userToken.id;
+  const user = await User.findById({ _id: userId });
+  const friends = user?.friends?.toString().split(',') ?? [];
+  friends.push(userId);
+  //console.log(friends);
+  const searchPostQuery = {
+    $or: [
+      {
+        description: { $regex: search, $options: 'i' },
+      },
+    ],
+  };
+  const posts = await Post.find(search ? searchPostQuery : {})
     .populate('user', {
       username: 1,
       profileImage: 1,
       _id: 1,
       email: 1,
+      friends: 1,
     })
-    .sort({ createdAt: -1 });
-  res.status(200).json({ posts: posts });
+    .sort({ _id: -1 });
+
+  //console.log(posts);
+  const friendsPosts = posts?.filter((post) => {
+    const postFrinds = post?.user?.friends?.toString().split(',') ?? [];
+    return friends.includes(post?.user?._id.toString());
+  });
+  //console.log('first', friendsPosts);
+  const otherPosts = posts?.filter(
+    (post) => !friends.includes(post?.user?._id.toString())
+  );
+  let postsRes = null;
+  if (friendsPosts?.length > 0) {
+    postsRes = search ? friendsPosts : [...friendsPosts, ...otherPosts];
+  } else {
+    postsRes = posts;
+  }
+  res.status(200).json({ posts: postsRes });
 };

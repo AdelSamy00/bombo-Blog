@@ -42,7 +42,10 @@ export const login = async (req, res) => {
     console.log(email, password);
     const foundUser = await User.findOne({ email }).populate([
       'posts',
-      'friends',
+      {
+        path: 'friends',
+        select: '-password',
+      },
     ]);
     if (foundUser) {
       const passOk = bcrypt.compareSync(password, foundUser.password);

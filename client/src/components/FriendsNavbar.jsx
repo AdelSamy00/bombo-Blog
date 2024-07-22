@@ -10,7 +10,7 @@ const FriendsNavbar = () => {
   const { user } = useSelector((state) => state.user);
   useEffect(() => {
     axios
-      .get(`/api/friends/allApprovalFriends/${user._id}`)
+      .get(`/api/friends/${user._id}`)
       .then((res) => {
         console.log(res);
         setApprovalFriends(res.data.friends);
@@ -25,39 +25,17 @@ const FriendsNavbar = () => {
         <h2 className="font text-3xl pt-3 text-center">Friends</h2>
         {approvalFriends.length > 0
           ? approvalFriends.map((fr, i) => {
-              if (fr.sender._id !== id) {
-                return (
-                  <div
-                    key={i}
-                    className="pt-5 flex gap-2 font-bold items-center pl-5 "
-                  >
-                    <img
-                      src={fr.sender.profileImage}
-                      className="w-10 h-10"
-                      alt=""
-                    />
-                    <span className="font2 text-orange-500 text-xl">
-                      {fr.sender.username}
-                    </span>
-                  </div>
-                );
-              } else {
-                return (
-                  <div
-                    key={i}
-                    className="pt-5 flex gap-2 font-bold items-center pl-5 "
-                  >
-                    <img
-                      src={fr.receiver.profileImage}
-                      className="w-10 h-10"
-                      alt=""
-                    />
-                    <span className="font2 text-orange-500 text-xl">
-                      {fr.receiver.username}
-                    </span>
-                  </div>
-                );
-              }
+              return (
+                <div
+                  key={i}
+                  className="pt-5 flex gap-2 font-bold items-center pl-5 "
+                >
+                  <img src={fr.profileImage} className="w-10 h-10" alt="" />
+                  <span className="font2 text-orange-500 text-xl">
+                    {fr.username}
+                  </span>
+                </div>
+              );
             })
           : ''}
 

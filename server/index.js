@@ -15,6 +15,7 @@ import router from './routes/index.js';
 import { User } from './models/User.js';
 import { Post } from './models/Post.js';
 import { Friend } from './models/Friend.js';
+import errorMiddleware from './middleware/errorMiddleware.js';
 
 const app = express();
 dotenv.config();
@@ -63,7 +64,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
   console.log('Database connected');
 });
-
+app.use(errorMiddleware);
 app.use(router);
 
 app.listen(3000, () => {

@@ -6,15 +6,22 @@ export const addFriend = async (req, res) => {
   console.log(friendId, id);
   const sender = await User.findById({ _id: id });
   const receiver = await User.findById({ _id: friendId });
+  const existRequest = await Friend.findOne({
+    sender: id || friendId,
+    receiver: friendId || id,
+  });
+  if (existRequest) {
+    return res.status(400).json({ message: 'Already sent Request' });
+  }
   const friendRequest = await Friend.create({
     status: 'pending',
-    sender,
-    receiver,
+    sender: id,
+    receiver: friendId,
   });
-  sender.friends.push(friendRequest);
+  /* sender.friends.push(friendRequest);
   sender.save();
   receiver.friends.push(friendRequest);
-  receiver.save();
+  receiver.save(); */
   /* const RequestToSender = {
     status: 'pending',
     request: 'sender',
@@ -33,6 +40,29 @@ export const addFriend = async (req, res) => {
   res.status(200).send({ message: 'send request' });
 };
 
+export const getFriendRequest = async (req, res, next) => {
+  try {
+    const { userId } = req.body.user;
+    console.log(userId);
+    const request = await Friend.find({
+      receiver: userId,
+      status: 'pending',
+    }).populate({
+      path: 'sender',
+      select: '-password',
+    });
+    res.status(200).json({
+      data: request,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: 'auth error', success: false, error: error.message });
+  }
+};
+
 export const getUserFriends = async (req, res) => {
   const { id } = req.params;
   //console.log(id);
@@ -41,12 +71,26 @@ export const getUserFriends = async (req, res) => {
 };
 
 export const acceptFriend = async (req, res) => {
+  const { userId } = req.body.user;
   const { requestId } = req.body;
-  console.log(requestId);
-  const request = await Friend.findByIdAndUpdate(
+  const requestExist = await Friend.findOne({ _id: requestId });
+  if (!requestExist) {
+    next('No Friend Request Found!.');
+    return;
+  }
+  const newRequest = await Friend.findByIdAndUpdate(
     { _id: requestId },
-    { status: 'approval' }
+    { status: 'approval' },
+    { new: true }
   );
+  if (newRequest.status === 'approval') {
+    const user = await User.findById({ _id: userId });
+    user.friends.push(newRequest?.sender);
+    await user.save();
+    const friend = await User.findById({ _id: newRequest?.sender });
+    friend.friends.push(newRequest?.receiver);
+    await friend.save();
+  }
   res.status(200).json({ message: 'accept' });
 };
 

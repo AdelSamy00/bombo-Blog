@@ -9,12 +9,15 @@ import Friends from './pages/Friends';
 import AddPost from './pages/AddPost';
 import EditProfile from './pages/EditProfile';
 import Header from './components/Header.jsx';
+import { useSelector } from 'react-redux';
 function App() {
   axios.defaults.baseURL = 'http://localhost:3000';
   axios.defaults.withCredentials = true;
+
+  const { user } = useSelector((state) => state?.user);
   return (
     <>
-      <Header />
+      {user && <Header />}
       <Routes>
         <Route path="/register" element={<Signup />} />
         <Route path="/" element={<Login />} />

@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, React } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AddPost from '../components/AddPost';
 import PostHeader from '../components/PostHeader';
 import PostCard from '../components/PostCard';
+import { SetUser } from '../redux/UserSlice';
 function Index() {
   const [id, setId] = useState('');
   const [profileImage, setProfileImage] = useState('');
@@ -16,6 +17,7 @@ function Index() {
   const [friends, setFriends] = useState([]);
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!user) navigate('/');
     setProfileImage(user.profileImage);
@@ -23,67 +25,15 @@ function Index() {
     setId(user._id);
     setFriends(user.friends);
     axios
-      .get('/api/post/')
+      .get('/api/post/', { params: { token: user?.token } })
       .then((res) => {
-        console.log(posts);
         setPosts(res.data.posts);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
-  const getAllFriends = async () => {
-    axios
-      .get(`/api/friends/${id}`)
-      .then((res) => {
-        //console.log(res);
-        setFriends(res.data.friends);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const addFriend = async (friendId, e) => {
-    e.preventDefault();
-    axios
-      .post('/api/friends/', {
-        friendId,
-        id,
-      })
-      .then(async (res) => {
-        //console.log(res);
-        await getAllFriends();
-        //alert('send Request succcessfully.');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const acceptFriend = async (requestId, e) => {
-    e.preventDefault();
-    axios
-      .put('/api/friends/', { requestId })
-      .then(async (res) => {
-        console.log(res);
-        await getAllFriends();
-        alert('You are now his friend.');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const cancelFriend = async (requestId, e) => {
-    e.preventDefault();
-    axios
-      .delete(`/api/friends/${requestId}`)
-      .then(async (res) => {
-        //console.log(res);
-        await getAllFriends();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+
   return (
     <section>
       <div className="flex justify-end">
@@ -97,24 +47,22 @@ function Index() {
           <div className="flex flex-col sm:px-20 gap-7">
             {posts.length > 0
               ? posts.map((el, i) => {
-                  return el.user.map((user, i) => {
-                    return (
-                      <div className="" key={i}>
-                        {/* post header */}
-                        <PostHeader
-                          user={user}
-                          el={el}
-                          email={email}
-                          addFriend={addFriend}
-                          acceptFriend={acceptFriend}
-                          cancelFriend={cancelFriend}
-                          friends={friends}
-                        />
-                        {/* post content */}
-                        <PostCard el={el} />
-                      </div>
-                    );
-                  });
+                  const isFriend = friends.some(
+                    (friend) => friend._id === el.user._id
+                  );
+                  return (
+                    <div className="" key={i}>
+                      {/* post header */}
+                      <PostHeader
+                        user={el.user}
+                        post={el}
+                        email={email}
+                        isFriend={isFriend}
+                      />
+                      {/* post content */}
+                      <PostCard el={el} />
+                    </div>
+                  );
                 })
               : ''}
           </div>
